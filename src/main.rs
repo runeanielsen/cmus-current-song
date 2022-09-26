@@ -112,7 +112,7 @@ mod tests {
     fn get_song_field_test() {
         let fields = vec!(
             "status playing",
-            "file /home/notation/nas/music/Snorri_Hallgrimsson-Orbit_Reworked/01-02-Peter_Gregson-og_minning_bi_n_ri_s_haegt-SMR.flac",
+            "file /home/user/music/Snorri_Hallgrimsson-Orbit_Reworked/01-02-Peter_Gregson-og_minning_bi_n_ri_s_haegt-SMR.flac",
             "duration 222",
             "position 136",
             "tag album Orbit Reworked",
@@ -156,7 +156,7 @@ mod tests {
     #[test]
     fn retrieve_tags_test() {
         let text = "status playing
-                    file /home/notation/nas/music/Snorri_Hallgrimsson-Orbit_Reworked/01-02-Peter_Gregson-og_minning_bi_n_ri_s_haegt-SMR.flac
+                    file /home/user/music/Snorri_Hallgrimsson-Orbit_Reworked/01-02-Peter_Gregson-og_minning_bi_n_ri_s_haegt-SMR.flac
                     duration 222
                     position 136
                     tag album Orbit Reworked
