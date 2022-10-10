@@ -61,14 +61,12 @@ fn make_song(fields: &[&str]) -> Song {
 fn main() {
     let information = query_song_information();
     let fields: Vec<&str> = information.split('\n').collect();
-    match get_field(&fields, "status") {
-        Some(status) => {
-            if status == "playing" {
-                let song = make_song(&fields);
-                println!("{}", format_song(&song));
-            }
+
+    if let Some(status) = get_field(&fields, "status") {
+        if status == "playing" {
+            let song = make_song(&fields);
+            println!("{}", format_song(&song));
         }
-        None => {}
     };
 }
 
