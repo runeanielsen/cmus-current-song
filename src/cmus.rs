@@ -1,22 +1,20 @@
 use std::process::Command;
 use std::str;
 
-pub struct PlayInfo {
-    fields: Vec<String>,
-}
+pub struct PlayInfo(Vec<String>);
 
 impl PlayInfo {
     pub fn new(fields: &[&str]) -> PlayInfo {
-        PlayInfo {
-            fields: fields
+        PlayInfo(
+            fields
                 .iter()
                 .map(std::string::ToString::to_string)
                 .collect(),
-        }
+        )
     }
 
     pub fn get_field(&self, field_name: &str) -> Option<String> {
-        self.fields
+        self.0
             .iter()
             .find(|x| x.contains(field_name))
             .map(|x| x.replace(field_name, "").trim_start().to_owned())
