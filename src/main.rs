@@ -1,40 +1,12 @@
 #![warn(clippy::all, clippy::pedantic)]
 
-use std::{process::Command, str};
+mod cmus;
+mod song;
 
-#[derive(Debug, PartialEq)]
-struct Song {
-    artist: String,
-    title: String,
-    position: u32,
-    duration: u32,
-}
+use cmus::query_current_song;
 
-fn format_time(t: u32) -> String {
-    format!("{:0>2}:{:0>2}", (t / 60), (t % 60))
-}
-
-fn format_song(song: &Song) -> String {
-    format!(
-        "{} : {} ({}/{})",
-        song.artist,
-        song.title,
-        format_time(song.position),
-        format_time(song.duration)
-    )
-}
-
-fn query_song_information() -> String {
-    let output = Command::new("cmus-remote")
-        .arg("-Q")
-        .current_dir("/bin")
-        .output()
-        .expect("ls command failed to start");
-
-    str::from_utf8(&output.stdout)
-        .expect("Could not convert to UTF-8.")
-        .to_owned()
-}
+use crate::song::Song;
+use std::str;
 
 fn get_field(fields: &[&str], field_name: &str) -> Option<String> {
     fields
@@ -59,13 +31,12 @@ fn make_song(fields: &[&str]) -> Song {
 }
 
 fn main() {
-    let information = query_song_information();
+    let information = query_current_song();
     let fields: Vec<&str> = information.split('\n').collect();
 
     if let Some(status) = get_field(&fields, "status") {
         if status == "playing" {
-            let song = make_song(&fields);
-            println!("{}", format_song(&song));
+            println!("{}", &make_song(&fields));
         }
     };
 }
@@ -85,27 +56,8 @@ mod tests {
 
         assert_eq!(
             "Snorri Hallgrimsson : …og minning þín rís hægt (Peter Gregson Rework) (02:16/03:42)",
-            format_song(&song)
+            format!("{}", song)
         );
-    }
-
-    #[test]
-    fn format_time_test() {
-        let assertions = vec![
-            ("02:16", 136),
-            ("03:42", 222),
-            ("00:00", 0),
-            ("00:10", 10),
-            ("00:30", 30),
-            ("01:00", 60),
-            ("01:03", 63),
-            ("11:00", 660),
-            ("11:10", 670),
-        ];
-
-        for assert in assertions {
-            assert_eq!(assert.0, format_time(assert.1));
-        }
     }
 
     #[test]
