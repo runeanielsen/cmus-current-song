@@ -5,12 +5,7 @@ pub struct PlayInfo(Vec<String>);
 
 impl PlayInfo {
     pub fn new(fields: &[&str]) -> PlayInfo {
-        PlayInfo(
-            fields
-                .iter()
-                .map(std::string::ToString::to_string)
-                .collect(),
-        )
+        PlayInfo(fields.iter().map(ToString::to_string).collect())
     }
 
     pub fn get_field(&self, field_name: &str) -> Option<String> {
