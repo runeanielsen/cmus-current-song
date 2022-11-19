@@ -3,40 +3,39 @@
 mod cmus;
 mod song;
 
-use cmus::query_current_song;
+use cmus::{query_current_song, PlayInfo};
 
 use crate::song::Song;
-use std::str;
 
-fn get_field(fields: &[&str], field_name: &str) -> Option<String> {
-    fields
-        .iter()
-        .find(|x| x.contains(field_name))
-        .map(|x| x.replace(field_name, "").trim_start().to_owned())
-}
-
-fn make_song(fields: &[&str]) -> Song {
-    Song {
-        artist: get_field(fields, "tag artist").expect("Could not get artist field."),
-        title: get_field(fields, "tag title").expect("could not get title field."),
-        position: get_field(fields, "position")
-            .expect("could not get position field.")
-            .parse()
-            .unwrap(),
-        duration: get_field(fields, "duration")
-            .expect("could not get duration field.")
-            .parse()
-            .unwrap(),
+impl From<PlayInfo> for Song {
+    fn from(play_info: PlayInfo) -> Self {
+        Song::new(
+            play_info
+                .get_field("tag artist")
+                .expect("Could not get artist field."),
+            play_info
+                .get_field("tag title")
+                .expect("could not get title field."),
+            play_info
+                .get_field("position")
+                .expect("could not get position field.")
+                .parse()
+                .unwrap(),
+            play_info
+                .get_field("duration")
+                .expect("could not get duration field.")
+                .parse()
+                .unwrap(),
+        )
     }
 }
 
 fn main() {
-    let information = query_current_song();
-    let fields: Vec<&str> = information.split('\n').collect();
+    let info = query_current_song();
 
-    if let Some(status) = get_field(&fields, "status") {
+    if let Some(status) = info.get_field("status") {
         if status == "playing" {
-            println!("{}", &make_song(&fields));
+            println!("{}", Into::<Song>::into(info));
         }
     };
 }
@@ -46,93 +45,33 @@ mod tests {
     use super::*;
 
     #[test]
-    fn format_song_test() {
-        let song = Song {
-            artist: String::from("Snorri Hallgrimsson"),
-            title: String::from("…og minning þín rís hægt (Peter Gregson Rework)"),
-            duration: 222,
-            position: 136,
-        };
-
-        assert_eq!(
-            "Snorri Hallgrimsson : …og minning þín rís hægt (Peter Gregson Rework) (02:16/03:42)",
-            format!("{}", song)
-        );
-    }
-
-    #[test]
-    fn get_field_test() {
-        let fields = vec!(
-            "status playing",
-            "file /home/user/music/Snorri_Hallgrimsson-Orbit_Reworked/01-02-Peter_Gregson-og_minning_bi_n_ri_s_haegt-SMR.flac",
-            "duration 222",
-            "position 136",
-            "tag album Orbit Reworked",
-            "tag title …og minning þín rís hægt (Peter Gregson Rework)",
-            "tag tracknumber 2",
-            "tag discnumber 1",
-            "tag date 2018",
-            "tag genre Électronique",
-            "tag albumartist Snorri Hallgrimsson",
-            "tag artist Snorri Hallgrimsson",
-            "set aaa_mode artist",
-            "set continue true",
-            "set play_library true",
-            "set play_sorted false",
-            "set replaygain disabled",
-            "set replaygain_limit true",
-            "set replaygain_preamp 0.000000",
-            "set repeat false",
-            "set repeat_current false",
-            "set shuffle off",
-            "set softvol false",
-            "set vol_left 100",
-            "set vol_right 100");
-
-        let assertions = vec![
-            ("playing", "status"),
-            ("Snorri Hallgrimsson", "tag artist"),
-            (
-                "…og minning þín rís hægt (Peter Gregson Rework)",
-                "tag title",
-            ),
-            ("222", "duration"),
-            ("136", "position"),
-        ];
-
-        for assertion in assertions {
-            assert_eq!(assertion.0, get_field(&fields, assertion.1).expect(""));
-        }
-    }
-
-    #[test]
     fn retrieve_tags_test() {
-        let fields = vec!(
-            "status playing",
-            "file /home/user/music/Snorri_Hallgrimsson-Orbit_Reworked/01-02-Peter_Gregson-og_minning_bi_n_ri_s_haegt-SMR.flac",
-            "duration 222",
-            "position 136",
-            "tag album Orbit Reworked",
-            "tag title …og minning þín rís hægt (Peter Gregson Rework)",
-            "tag tracknumber 2",
-            "tag discnumber 1",
-            "tag date 2018",
-            "tag genre Électronique",
-            "tag albumartist Snorri Hallgrimsson",
-            "tag artist Snorri Hallgrimsson",
-            "set aaa_mode artist",
-            "set continue true",
-            "set play_library true",
-            "set play_sorted false",
-            "set replaygain disabled",
-            "set replaygain_limit true",
-            "set replaygain_preamp 0.000000",
-            "set repeat false",
-            "set repeat_current false",
-            "set shuffle off",
-            "set softvol false",
-            "set vol_left 100",
-            "set vol_right 100");
+        let play_info = PlayInfo::new(
+            &["status playing",
+              "file /home/user/music/Snorri_Hallgrimsson-Orbit_Reworked/01-02-Peter_Gregson-og_minning_bi_n_ri_s_haegt-SMR.flac",
+              "duration 222",
+              "position 136",
+              "tag album Orbit Reworked",
+              "tag title …og minning þín rís hægt (Peter Gregson Rework)",
+              "tag tracknumber 2",
+              "tag discnumber 1",
+              "tag date 2018",
+              "tag genre Électronique",
+              "tag albumartist Snorri Hallgrimsson",
+              "tag artist Snorri Hallgrimsson",
+              "set aaa_mode artist",
+              "set continue true",
+              "set play_library true",
+              "set play_sorted false",
+              "set replaygain disabled",
+              "set replaygain_limit true",
+              "set replaygain_preamp 0.000000",
+              "set repeat false",
+              "set repeat_current false",
+              "set shuffle off",
+              "set softvol false",
+              "set vol_left 100",
+              "set vol_right 100"]);
 
         let expected = Song {
             artist: String::from("Snorri Hallgrimsson"),
@@ -141,6 +80,6 @@ mod tests {
             position: 136,
         };
 
-        assert_eq!(expected, make_song(&fields));
+        assert_eq!(expected, Into::into(play_info));
     }
 }
