@@ -55,7 +55,7 @@ pub fn query_play_info() -> Option<PlayInfo> {
     let output = Command::new("cmus-remote")
         .arg("-Q")
         .output()
-        .expect("cmus-remote failed to start");
+        .expect("cmus-remote failed to start.");
 
     if output.status.success() {
         let fields: Vec<_> = str::from_utf8(&output.stdout)
