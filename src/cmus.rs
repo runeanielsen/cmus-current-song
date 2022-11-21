@@ -54,7 +54,6 @@ fn get_field_value(fields: &[&str], field_name: &str) -> Option<String> {
 pub fn query_play_info() -> Option<PlayInfo> {
     let output = Command::new("cmus-remote")
         .arg("-Q")
-        .current_dir("/bin")
         .output()
         .expect("cmus-remote failed to start");
 
