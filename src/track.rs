@@ -38,7 +38,7 @@ impl Display for Track {
     }
 }
 
-impl From<QueryOutput> for Track {
+impl From<QueryOutput> for Option<Track> {
     fn from(s: QueryOutput) -> Self {
         fn field_row_value(field_rows: &[&str], field_name: &str) -> Option<String> {
             field_rows
@@ -49,18 +49,24 @@ impl From<QueryOutput> for Track {
 
         let field_rows: Vec<_> = s.0.split('\n').collect();
 
-        Track::new(
-            field_row_value(&field_rows, "tag artist").expect("Could not get artist field."),
-            field_row_value(&field_rows, "tag title").expect("could not get title field."),
-            field_row_value(&field_rows, "position")
-                .expect("could not get position field.")
-                .parse()
-                .unwrap(),
-            field_row_value(&field_rows, "duration")
-                .expect("could not get duration field.")
-                .parse()
-                .unwrap(),
-        )
+        let status = field_row_value(&field_rows, "status").expect("Could not get status field.");
+
+        if status == "playing" {
+            Some(Track::new(
+                field_row_value(&field_rows, "tag artist").expect("Could not get artist field."),
+                field_row_value(&field_rows, "tag title").expect("could not get title field."),
+                field_row_value(&field_rows, "position")
+                    .expect("could not get position field.")
+                    .parse()
+                    .unwrap(),
+                field_row_value(&field_rows, "duration")
+                    .expect("could not get duration field.")
+                    .parse()
+                    .unwrap(),
+            ))
+        } else {
+            None
+        }
     }
 }
 
@@ -69,9 +75,36 @@ mod tests {
     use super::*;
 
     #[test]
-    fn can_convert_from_cmus_output_to_track() {
+    fn can_handle_stopped_output() {
         let cmus_query_output = QueryOutput(
             "status stopped
+set aaa_mode artist
+set continue true
+set play_library true
+set play_sorted false
+set replaygain disabled
+set replaygain_limit true
+set replaygain_preamp 0.000000
+set repeat false
+set repeat_current false
+set shuffle albums
+set softvol false
+set vol_left 100
+set vol_right 100
+"
+            .to_string(),
+        );
+
+        let expected = None;
+
+        let result: Option<Track> = cmus_query_output.into();
+        assert_eq!(expected, result);
+    }
+
+    #[test]
+    fn can_convert_from_playing_cmus_output_to_track() {
+        let cmus_query_output = QueryOutput(
+            "status playing
 file /music/Amy_Winehouse-Frank/01-01-Amy_Winehouse-Intro_Stronger_Than_Me-SMR.flac
 duration 234
 position 22
@@ -107,7 +140,8 @@ set vol_right 100
             duration: 234,
         };
 
-        assert_eq!(expected, cmus_query_output.into());
+        let result: Option<Track> = cmus_query_output.into();
+        assert_eq!(expected, result.unwrap());
     }
 
     #[test]
