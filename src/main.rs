@@ -7,13 +7,8 @@ mod track;
 
 fn main() {
     if let Some(output) = cmus::query() {
-        match Into::<Option<Track>>::into(output) {
-            Some(track) => {
-                println!("{}", track);
-            }
-            None => {
-                print!("");
-            }
+        if let Some(track) = Into::<Option<Track>>::into(output) {
+            println!("{}", track);
         }
     }
 }
