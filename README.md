@@ -1,6 +1,14 @@
 # Current Song
 
-Small program to display current song playing in cmus using cmus-remote. It has no fancy configuration, just execute the binary and it will display it like this `Red Hot Chili Peppers : Copperbelly (02:18/03:44)`.
+The cmus-current-song program uses the 'cmus-remote' binary to query the current song that is playing in the CMUS music player. It does not have any configuration options, and simply displays the current song information when run. It will parse the output of the 'cmus-remote' command to extract the necessary information about the current song, such as the artist, track title, and album.
+
+Here is an example of what the output might look like.
+
+```sh
+$ cmus-current-song
+
+Red Hot Chili Peppers : Copperbelly (02:18/03:44)
+```
 
 ## Installation
 
