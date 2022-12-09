@@ -4,7 +4,7 @@ use Irssi;
 sub np
 {
     my($data,$server,$witem) = @_; #loads irssi env.
-    my $raw_cmus_current_song = `current-song`;
+    my $raw_cmus_current_song = `cmus-current-song`;
     my $cmus_current_song = "Now Playing: $raw_cmus_current_song";
     #prints to the channel
     if ($witem && ($witem->{type} eq "CHANNEL" || $witem->{type} eq "QUERY")) 
