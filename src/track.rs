@@ -155,7 +155,7 @@ set vol_right 100
 
         assert_eq!(
             "Snorri Hallgrimsson : …og minning þín rís hægt (Peter Gregson Rework) (02:16/03:42)",
-            format!("{}", play_info)
+            format!("{play_info}")
         );
     }
 }
