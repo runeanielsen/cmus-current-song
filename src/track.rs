@@ -53,8 +53,8 @@ impl From<QueryOutput> for Option<Track> {
 
         if status == "playing" {
             Some(Track::new(
-                field_row_value(&field_rows, "tag artist").expect("Could not get artist field."),
-                field_row_value(&field_rows, "tag title").expect("Could not get title field."),
+                field_row_value(&field_rows, "tag artist").unwrap_or_default(),
+                field_row_value(&field_rows, "tag title").unwrap_or_default(),
                 field_row_value(&field_rows, "position")
                     .expect("Could not get position field.")
                     .parse()
