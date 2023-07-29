@@ -43,7 +43,7 @@ impl From<QueryOutput> for Option<Track> {
         fn field_row_value(field_rows: &[&str], field_name: &str) -> Option<String> {
             field_rows
                 .iter()
-                .find(|x| x.contains(field_name))
+                .find(|x| x.starts_with(field_name))
                 .map(|x| x.replace(field_name, "").trim_start().to_owned())
         }
 
