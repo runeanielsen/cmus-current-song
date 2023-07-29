@@ -43,23 +43,23 @@ impl From<QueryOutput> for Option<Track> {
         fn field_row_value(field_rows: &[&str], field_name: &str) -> Option<String> {
             field_rows
                 .iter()
-                .find(|x| x.starts_with(field_name))
-                .map(|x| x.replace(field_name, "").trim_start().to_owned())
+                .find(|field| field.starts_with(field_name))
+                .map(|field| field.replace(field_name, ""))
         }
 
         let field_rows: Vec<_> = s.0.split('\n').collect();
 
-        let status = field_row_value(&field_rows, "status").expect("Could not get status field.");
+        let status = field_row_value(&field_rows, "status ").expect("Could not get status field.");
 
         if status == "playing" {
             Some(Track::new(
-                field_row_value(&field_rows, "tag artist").unwrap_or_default(),
-                field_row_value(&field_rows, "tag title").unwrap_or_default(),
-                field_row_value(&field_rows, "position")
+                field_row_value(&field_rows, "tag artist ").unwrap_or_default(),
+                field_row_value(&field_rows, "tag title ").unwrap_or_default(),
+                field_row_value(&field_rows, "position ")
                     .expect("Could not get position field.")
                     .parse()
                     .unwrap(),
-                field_row_value(&field_rows, "duration")
+                field_row_value(&field_rows, "duration ")
                     .expect("Could not get duration field.")
                     .parse()
                     .unwrap(),
