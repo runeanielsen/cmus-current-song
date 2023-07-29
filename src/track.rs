@@ -58,11 +58,11 @@ impl From<QueryOutput> for Option<Track> {
                 field_row_value(&field_rows, "position ")
                     .expect("Could not get position field.")
                     .parse()
-                    .unwrap(),
+                    .expect("Could not parse the position value."),
                 field_row_value(&field_rows, "duration ")
                     .expect("Could not get duration field.")
                     .parse()
-                    .unwrap(),
+                    .expect("Could not parse the duration value."),
             ))
         } else {
             None
