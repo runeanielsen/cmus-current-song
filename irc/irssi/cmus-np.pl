@@ -37,6 +37,3 @@ Irssi::command_bind 'nphelp' => \&help;
 
 #notify user on successful load
 Irssi::print "cmus-np.pl loaded - /np help for help";
-
-
-
